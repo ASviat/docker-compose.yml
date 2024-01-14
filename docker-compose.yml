@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  db:
+    image: mariadb:10.10.2
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    volumes:
+    - db:/var/lib/mysql
+    networks:
+      - test-network
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  adminer:
+    depends_on:
+      - db
+    image: adminer:4.8.1
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:6080:8080
+    volumes:
+      - ./myfolder:/myfolder
+    networks:
+      - test-network
+    deploy:
+      mode: replicated
+      replicas: 1
+
+volumes:
+  db:
+
+networks:
+  test-network:
+    driver: bridge
